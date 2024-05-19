@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="RowDetailItem" extends="Group" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" uri="pkg:/components/libRedflix/RowDetailItem.brs" />
+
+	<interface>
+		<field id="width" type="float" onChange="setSize" />
+		<field id="height" type="float" onChange="setSize" />
+		<field id="itemContent" type="node" onChange="showcontent" />
+	</interface>
+
+	<children>
+		<Rectangle id="meta" color="#081b27">
+			<Poster
+				id="itemPoster"
+				loadDisplayMode="scaleToFill"
+				translation="[ 300, 30 ]" />
+
+			<Label
+				id="title"
+				horizAlign="left"
+				vertAlign="center"
+				translation="[850, 40]"
+				color="#ffffff">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="72" />
+			</Label>
+
+			<Label
+				id="description"
+				horizAlign="left"
+				vertAlign="center"
+				translation="[850, 200]"
+				color="#ffffff"
+				numLines="5"
+				maxLines="5"
+				wrap="true"
+				width="900">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="36" />
+			</Label>
+
+			<Label text="Duration:" translation="[850, 510]">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="30" />
+			</Label>
+			<Label id="duration" translation="[1200, 510]">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="30" />
+			</Label>
+			<Label text="Director:" translation="[850, 550]">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="30" />
+			</Label>
+			<Label id="director" translation="[1200, 550]">
+				<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
+					size="30" />
+			</Label>
+		</Rectangle>
+		<Poster
+			id="posterOnly"
+			loadDisplayMode="scaleToFill"
+			translation="[ 0, 0 ]" visible="false" />
+	</children>
+</component>

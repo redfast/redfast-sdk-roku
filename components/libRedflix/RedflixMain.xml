@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="RedflixMain" extends="Group"
+	xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+	<script type="text/brightscript"
+		uri="pkg:/components/libRedflix/RedflixMain.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/consts.brs" />
+
+	<children>
+		<Rectangle id="root" color="0x000000" width="1920"
+			height="1080" translation="[0,0]">
+			<Rectangle id="menu" color="#0b2737" width="1920"
+				height="120" translation="[0,0]">
+				<Poster
+					uri="https://assets.website-files.com/635c3e79a327a5da87d7a7c5/635c3fb775e3f87940237f07_redflix-logo-video-layout.png"
+					width="200" height="60" translation="[160, 30]" />
+
+				<CtaButton id="menu-home" translation="[1000, 30]"
+					width="120" height="60" />
+				<CtaButton id="menu-latest" translation="[1200, 30]"
+					width="120" height="60" />
+				<CtaButton id="menu-genres" translation="[1400, 30]"
+					width="120" height="60" />
+			</Rectangle>
+			<Rectangle id="content" color="#081b27" width="1920"
+				height="960" translation="[0,120]">
+				<RowList id="home" translation="[20, 20]" />
+			</Rectangle>
+			<Rectangle id="modal" color="#081b27" width="1920"
+				height="960" translation="[0,120]" visible="false">
+				<RowList id="detail" translation="[20, 20]" />
+				<Poster id="promo" uri="pkg:/images/promo.jpeg" width="1440"
+					height="720" translation="[240,120]" visible="false">
+					<RowList id="promolist" translation="[270, 50]" />
+				</Poster>
+			</Rectangle>
+		</Rectangle>
+	</children>
+</component>

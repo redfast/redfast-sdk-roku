@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name = "RowListItem" extends = "Group" >
+  <script type="text/brightscript" 
+		uri="pkg:/components/libRedfit/RowListItem.brs" />
+
+  <interface >
+  	<field id = "width" type = "float" onChange = "setSize" />
+  	<field id = "height" type = "float" onChange = "setSize" />
+    <field id = "itemContent" type = "node" onChange = "showcontent" />
+  </interface>
+ 
+  <children >
+    <Poster
+      id = "itemPoster"
+      loadDisplayMode = "scaleToFill"
+      translation = "[ 0, 0 ]">
+	      <SimpleLabel
+		      id = "firstName"
+		      fontUri = "font:MediumBoldSystemFont" 
+		  	  visible = "false"
+		  	  color = "#ffffff"
+	      />
+	      <SimpleLabel
+		      id = "lastName"
+		      fontUri = "font:MediumBoldSystemFont" 
+		  	  visible = "false"
+		  	  color = "#ffffff"
+	      />
+    </Poster>
+    
+    <Label
+      id = "itemLabel"
+      font = "font:SmallestSystemFont" 
+      horizAlign = "left"
+  	  vertAlign = "center"
+  	  wrap = "true"
+  	  maxLines = "2"
+      />
+  </children> 
+</component>

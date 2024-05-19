@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="sandbox" extends="Group"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="pkg:/components/sandbox/sandbox.brs" />
+
+
+	<children>
+		<PosterGrid id="classGrid" translation="[0, 0]"
+			basePosterSize="[880, 590]" itemSpacing="[20, 32]"
+			caption1NumLines="1" caption2NumLines="1" numColumns="2" />
+	</children>
+</component>

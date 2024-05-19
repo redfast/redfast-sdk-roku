@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="PromotionManager" extends="Group"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/PromotionManager.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/consts.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/LocalStorage.brs" />
+
+	<interface>
+		<field id="isProd" type="bool" />
+		<field id="result" type="assocarray" />
+		<field id="iapResult" type="node" />
+		<field id="font" type="node" />
+		<field id="lastError" type="string" />
+		<function name="initPromotion" />
+		<function name="enablePromotion" />
+		<function name="setUserId" />
+		<function name="getUserId" />
+		<function name="onScreenChanged" />
+		<function name="onButtonClicked" />
+		<function name="onInlineClicked" />
+		<function name="onInlineViewed" />
+		<function name="getInlines" />
+		<function name="getIapItems" />
+		<function name="getPuchasedItems" />
+		<function name="purchaseIap" />
+		<function name="customTrack" />
+		<function name="resetGoal" />
+		<function name="getMetas" />
+		<function name="ping" />
+	</interface>
+
+	<children>
+    	<ChannelStore id="billing"/>
+	</children>
+</component>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ClassItem" extends="Group"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="pkg:/components/libRedfit/ClassItem.brs" />
+
+	<interface>
+		<field id="width" type="float" onChange="setSize" />
+		<field id="height" type="float" onChange="setSize" />
+		<field id="itemContent" type="node" onChange="showcontent" />
+	</interface>
+
+	<children>
+		<Poster id="itemPoster" loadDisplayMode="scaleToFill"
+			translation="[ 0, 0 ]" />
+		<Label id="description" font="font:MediumSystemFont"
+			color="#ffffff" numLines="1" ellipsizeOnBoundary="true" />
+		<Label id="shortDescription" font="font:SmallestSystemFont"
+			color="#ffffff" numLines="1" ellipsizeOnBoundary="true" />
+	</children>
+</component>

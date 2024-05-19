@@ -1,0 +1,2 @@
+#!/bin/bash
+zip roku-sdk.zip components/libTemplate/TemplateMain.brs components/libTemplate/TemplateMain.xml components/redfast/PromotionDialog.brs components/redfast/PromotionManager.xml components/redfast/CtaButton.xml components/redfast/PromotionManager.brs components/redfast/CtaButton.brs components/redfast/PromotionDialog.xml components/redfast/consts.brs components/redfast/PromotionApi.brs components/redfast/PromotionApi.xml components/redfast/LocalStorage.brs components/redfast/PromotionVideoDialog.brs components/redfast/PromotionVideoDialog.xml

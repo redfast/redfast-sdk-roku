@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="CtaButton" extends="Rectangle"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/CtaButton.brs" />
+
+	<interface>
+		<field id="label" type="string" value="" onChange="labelChanged"/>
+		<field id="bgColor" type="string" value="#00000000" onChange="bgColorChanged"/>
+		<field id="textColor" type="string" value="" onChange="textColorChanged"/>
+		<field id="textHighlightedColor" type="string" value="#00000000"/>
+		<field id="font" type="node" onChange="fontChanged"/>
+		<field id="buttonSelected" type="bool" alwaysNotify="true"/>
+		<field id="enabled" type="bool" value="true"/>
+		<field id="forceHighlighted" type="bool" value="false"/>
+	</interface>
+
+	<children>
+		<Label id="buttonLabel" text="" color="0xff0000ff"
+			horizAlign="center" vertAlign="center" numLines="1"/>
+	</children>
+</component>

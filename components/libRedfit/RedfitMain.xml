@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="RedfitMain" extends="Group"
+	xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+	<script type="text/brightscript"
+		uri="pkg:/components/libRedfit/RedfitMain.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/consts.brs" />
+
+	<children>
+		<DebugView id="debugView" />
+		<Rectangle id="root" color="0x000000" width="1920"
+			height="1080" translation="[0,0]">
+
+			<Rectangle color="0x000000" width="120" height="1080"
+				translation="[0,0]">
+				<Poster uri="pkg:/images/redfit_kettle.png" width="80"
+					height="100" translation="[20, 40]" />
+				<CtaButton id="menu_featured" translation="[20, 240]"
+					width="80" height="80" />
+				<CtaButton id="menu_class" translation="[20, 380]"
+					width="80" height="80" />
+				<CtaButton id="menu_instructor" translation="[20, 520]"
+					width="80" height="80" />
+				<CtaButton id="menu_shop" translation="[20, 660]"
+					width="80" height="80" />
+				<CtaButton id="menu_profile" translation="[20, 800]"
+					width="80" height="80" />
+			</Rectangle>
+			<RowList id="featured" translation="[120, 0]" />
+			<Rectangle id="classes" color="0x000000"
+				translation="[120, 0]" width="1800" height="1080" visible="false">
+				<RowList id="featuredClasses" />
+				<RowList id="classGrid" translation="[0, 570]" />
+			</Rectangle>
+			<RowList id="instructor" translation="[120, 0]"
+				visible="false" />
+			<Rectangle id="products" color="0x808080"
+				translation="[120, 0]" width="1800" height="1080" visible="false">
+				<Poster uri="pkg:/images/shophero2.png" width="1800"
+					height="400" translation="[0, 0]" />
+				<PosterGrid id="productGrid" translation="[0, 410]"
+					basePosterSize="[420, 550]" itemSpacing="[100, 32]"
+					caption1NumLines="1" caption2NumLines="1" numColumns="3" />
+			</Rectangle>
+			<Rectangle id="profile" color="0x000000" visible="false">
+				<LabelList id="actions" translation="[160,92]"
+					itemSize="[440,48]">
+					<ContentNode id="moviemenucontent" role="content">
+						<ContentNode title="Switch User Id" />
+						<ContentNode title="Reset User Data" />
+						<ContentNode title="Disable SDK" />
+						<ContentNode title="Enable SDK" />
+					</ContentNode>
+				</LabelList>
+			</Rectangle>
+		</Rectangle>
+	</children>
+</component>

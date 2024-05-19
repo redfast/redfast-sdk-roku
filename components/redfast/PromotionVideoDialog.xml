@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="PromotionVideoDialog" extends="Group" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" 
+		uri="pkg:/components/redfast/PromotionVideoDialog.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/consts.brs" />
+	<script type="text/brightscript"
+		uri="pkg:/components/redfast/LocalStorage.brs" />
+		
+	<interface>
+		<function name="showModal" />
+		<field id="result" type="assocarray" />
+		<field id="font" type="node" />
+	</interface>
+	
+	<children>
+		<Rectangle id="root" color="0x000000e0" width="1920"
+			height="1080" translation="[0, 0]">
+			<Video id="rf_settings_video">
+				<Poster id="rf_settings_bg_image" />
+				<CtaButton id="rf_retention_confirm_button_text"
+					width="350" height="80" />
+				<CtaButton id="rf_retention_cancel_button_text"
+					width="350" height="80" />
+			</Video>
+		</Rectangle>
+	</children>
+</component>

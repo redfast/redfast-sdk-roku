@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="RedfitApi" extends="Task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="pkg:/components/libContent/RedfitApi.brs" />
+
+	<interface>
+		<field id="content" type="node" />
+		<function name="getContent" />
+	</interface>
+</component>

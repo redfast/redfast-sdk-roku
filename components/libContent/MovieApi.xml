@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MovieApi" extends="Task"
+	xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+	<script type="text/brightscript"
+		uri="pkg:/components/libContent/MovieApi.brs" />
+		
+	<interface>
+		<field id="content" type="node" />
+		<function name="getMovies" />
+	</interface>
+</component>
