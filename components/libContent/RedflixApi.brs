@@ -4,8 +4,8 @@
 ' permission of Redfast Inc
 
 sub init()
-    m.BEARER = "Bearer 884d43a3a8e330ea67e32e1dfd2a59d10a1cddafeff151e87ba330f09b9895b2"
-    m.BASE_URL = "https://api.webflow.com"
+    m.BEARER = "Bearer c405ed357f5046964ad69f1b5f45df7da5a03913af05cf685612a724bd5e48ed"
+    m.BASE_URL = "https://api.webflow.com/v2"
 end sub
 
 sub getMovies(params as Object)
@@ -66,9 +66,8 @@ sub getMoviesImpl()
 '    end for
     root = createObject("RoSGNode", "ContentNode")
     for j = 0 to allMovies.items.count() - 1 step 1
-        movie = allMovies.items[j]
+        movie = allMovies.items[j]["fieldData"]
         movieNode = root.createChild("ContentNode")
-        movieNode.title = movie.name
         movieNode.ContentType = "movie"
         movieNode.title = movie["name"]
         movieNode.Directors = [movie["director"]]

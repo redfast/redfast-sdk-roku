@@ -23,7 +23,7 @@ function callApi(params)
     action.callFunc("fireEvent", params)
 end function
 
-sub showModal(params as Object)
+sub showModal(params as object)
     m.appId = params.appId
     m.userId = params.userId
     m.deviceType = params.deviceType
@@ -31,24 +31,22 @@ sub showModal(params as Object)
     path = params.path
     m.currentPath = path
 
-    m.rf_retention_confirm_button_text.label = path.actions.rf_retention_confirm_button_text
-    m.rf_retention_confirm_button_text.textColor = path.actions.rf_retention_confirm_button_text_color
-    m.rf_retention_confirm_button_text.textHighlightedColor = path.actions.rf_retention_confirm_button_text_highlight_color
-    m.rf_retention_confirm_button_text.bgColor = path.actions.rf_settings_background_color
-    m.rf_retention_confirm_button_text.font = m.top.font
+    m.rf_retention_confirm_button_text.label = path.actions.rf_retention_button1_text
+    m.rf_retention_confirm_button_text.textColor = path.actions.button1_text_color
+    m.rf_retention_confirm_button_text.textHighlightedColor = path.actions.button1_highlight_color
+    m.rf_retention_confirm_button_text.bgColor = path.actions.button1_bg_color
+    m.rf_retention_confirm_button_text.font = m.top.fonts.ctaFont
     m.rf_retention_confirm_button_text.ObserveField("buttonSelected", "onAccept")
-    m.rf_retention_cancel_button_text.label = path.actions.rf_retention_cancel_button_text
-    m.rf_retention_cancel_button_text.textColor = path.actions.rf_retention_cancel_button_text_color
-    m.rf_retention_cancel_button_text.textHighlightedColor = path.actions.rf_retention_cancel_button_text_highlight_color
-    m.rf_retention_cancel_button_text.bgColor = path.actions.rf_settings_background_color
-    m.rf_retention_cancel_button_text.font = m.top.font
+    m.rf_retention_cancel_button_text.label = path.actions.rf_retention_button3_text
+    m.rf_retention_cancel_button_text.textColor = path.actions.button3_text_color
+    m.rf_retention_cancel_button_text.textHighlightedColor = path.actions.button3_highlight_color
+    m.rf_retention_cancel_button_text.bgColor = path.actions.button3_bg_color
+    m.rf_retention_cancel_button_text.font = m.top.fonts.ctaFont
     m.rf_retention_cancel_button_text.ObserveField("buttonSelected", "onDecline")
 
-    m.rf_settings_video_width = pxToInteger(path.actions.rf_settings_video_width)
-    m.rf_settings_video_height = pxToInteger(path.actions.rf_settings_video_height)
-    m.rf_settings_video_autoplay = false
-    if path.actions.rf_settings_video_autoplay = "true"
-        m.rf_settings_video_autoplay = true
+    m.rf_settings_video_loop = false
+    if path.actions.rf_settings_video_loop = "true"
+        m.rf_settings_video_loop = true
     end if
     m.rf_settings_video_controls = false
     if path.actions.rf_settings_video_controls = "true"
@@ -59,16 +57,17 @@ sub showModal(params as Object)
     if path.actions.rf_settings_video_is_url = "true"
         m.rf_settings_video_is_url = true
     end if
-    callApi({event: "impression", pathId: path.id, actionGroupId: path.action_group_id})
+    callApi({ event: "impression", pathId: path.id, actionGroupId: path.action_group_id })
 
-    m.rf_settings_video.width = m.rf_settings_video_width
-    m.rf_settings_video.height = m.rf_settings_video_height
-    m.rf_settings_bg_image.width = m.rf_settings_video_width
-    m.rf_settings_bg_image.height = m.rf_settings_video_height
+    prompt_width_percent = 70 / 100
+    m.rf_settings_video.width = 1920 * prompt_width_percent
+    m.rf_settings_video.height = 1080 * prompt_width_percent
+    m.rf_settings_bg_image.width = m.rf_settings_video.width
+    m.rf_settings_bg_image.height = m.rf_settings_video.height
     m.rf_settings_bg_image.uri = path.actions.rf_settings_video_poster
-    m.rf_settings_video.translation = [(1920 - m.rf_settings_video_width) / 2, (1080 - m.rf_settings_video_height) / 2]
-    m.rf_retention_confirm_button_text.translation = [50, m.rf_settings_video_height - 120]
-    m.rf_retention_cancel_button_text.translation = [450, m.rf_settings_video_height - 120]
+    m.rf_settings_video.translation = [(1920 - m.rf_settings_video.width) / 2, (1080 - m.rf_settings_video.height) / 2]
+    m.rf_retention_confirm_button_text.translation = [50, m.rf_settings_video.height - 120]
+    m.rf_retention_cancel_button_text.translation = [450, m.rf_settings_video.height - 120]
     m.rf_retention_confirm_button_text.setFocus(true)
 
     videoContent = createObject("RoSGNode", "ContentNode")
@@ -98,27 +97,25 @@ end sub
 
 sub onAccept()
     m.rf_settings_video.control = "stop"
-    callApi({event: "goal", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id})
+    callApi({ event: "goal", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id })
     m.localStorage.createNewOverlayKey(m.currentPath.id, m.currentPath.actions.rf_settings_accept_interval)
-    m.top.result = {
-        value: m.result.accepted,
-        extra: {
-            deeplink: parseKeyValuePair(m.currentPath.actions.rf_settings_deeplink),
-            meta: m.currentPath.actions.rf_metadata
-        }
-    }
+    m.top.result = preparePromptResult({
+        code: m.result.button1,
+        roku: m.currentPath.actions.rf_settings_roku_product_id,
+        deeplink: parseKeyValuePair(m.currentPath.actions.rf_settings_deeplink),
+        meta: m.currentPath.actions.rf_metadata
+    }, m.currentPath)
 end sub
 
 sub onDecline()
     m.rf_settings_video.control = "stop"
-    callApi({event: "dismiss", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id, reason: "decline"})
+    callApi({ event: "decline", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id, reason: "decline" })
     m.localStorage.createNewOverlayKey(m.currentPath.id, m.currentPath.actions.rf_settings_decline_interval)
-    m.top.result = {
-        value: m.result.declined,
-        extra: {
-            meta: m.currentPath.actions.rf_metadata
-        }
-    }
+    m.top.result = preparePromptResult({
+        code: m.result.button3,
+        roku: m.currentPath.actions.rf_settings_roku_product_id,
+        meta: m.currentPath.actions.rf_metadata
+    }, m.currentPath)
 end sub
 
 function onKeyEvent(key as string, pressed as boolean) as boolean
@@ -128,14 +125,12 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
         m.rf_retention_cancel_button_text.setFocus(true)
     else if key = "back" and pressed
         m.rf_settings_video.control = "stop"
-        m.top.result = {
-            value: m.result.abort,
-            extra: {
-                meta: m.currentPath.actions.rf_metadata
-            }
-        }
-        callApi({event: "dismiss", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id, reason: "dismiss"})
+        callApi({ event: "dismiss", pathId: m.currentPath.id, actionGroupId: m.currentPath.action_group_id, reason: "dismiss" })
         m.localStorage.createNewOverlayKey(m.currentPath.id, m.currentPath.actions.rf_settings_dismiss_interval)
+        m.top.result = preparePromptResult({
+            code: m.result.dismissed,
+            meta: m.currentPath.actions.rf_metadata
+        }, m.currentPath)
     end if
     return true
 end function

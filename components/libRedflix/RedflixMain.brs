@@ -1,8 +1,10 @@
 sub init()
     m.promoMgr = m.top.GetScene().findNode("promoMgr")
-    m.promoMgr.observeField("result", "onModalDismissed")
+    m.promoMgr.observeField("result", "onPromptResult")
 
     m.viewRoot = m.top.findNode("root")
+    m.bannerRoot =  m.top.findNode("hzBannerRoot")
+    m.contentRoot = m.top.findNode("content")
 
     m.contentTask = createObject("RoSGNode", "RedflixApi")
     m.contentTask.observeField("state", "onContentComplete")
@@ -12,18 +14,21 @@ sub init()
     m.menuHome.label = "Home"
     m.menuHome.textColor = "#808080"
     m.menuHome.textHighlightedColor = "#ffffff"
+    m.menuHome.bgColor = "#0b2737"
     m.menuHome.ObserveField("buttonSelected", "showHome")
 
     m.menuLatest = m.top.findNode("menu-latest")
     m.menuLatest.label = "Latest"
     m.menuLatest.textColor = "#808080"
     m.menuLatest.textHighlightedColor = "#ffffff"
+    m.menuLatest.bgColor = "#0b2737"
     m.menuLatest.ObserveField("buttonSelected", "showLatest")
 
     m.menuGenres = m.top.findNode("menu-genres")
     m.menuGenres.label = "Genres"
     m.menuGenres.textColor = "#808080"
     m.menuGenres.textHighlightedColor = "#ffffff"
+    m.menuGenres.bgColor = "#0b2737"
     m.menuGenres.ObserveField("buttonSelected", "showGenres")
 
     m.home = m.top.findNode("home")
@@ -31,6 +36,8 @@ sub init()
     m.detail = m.top.findNode("detail")
     m.promo = m.top.findNode("promo")
     m.promolist = m.top.findNode("promolist")
+
+    m.inline = invalid
 end sub
 
 sub onContentComplete()
@@ -40,15 +47,16 @@ sub onContentComplete()
             m.currentMenu = 0
             m.menuHome.forceHighlighted = true
 
+            zoneIds = ZoneType()
+            m.inline = m.promoMgr.callFunc("showInline", {root: m.bannerRoot, 
+                type: zoneIds.rokuHorizontal,
+                scale: "scaleToFill"
+            })
+            if m.inline <> invalid
+                m.inline.observeField("result", "onInlineResult")
+            end if
+            
             root = createObject("RoSGNode", "ContentNode")
-
-            inlineRow = root.createChild("ContentNode")
-            inline = inlineRow.createChild("ContentNode")
-            values = m.promoMgr.callFunc("getInlines", {type: "redflix-featured"})
-            inline.HDPOSTERURL = values[0].actions.rf_settings_bg_image_roku_os_tv_composite
-            inline.Title = values[0].actions.rf_settings_roku_product_id
-            inline.Description = values[0].actions.rf_settings_roku_product_operation
-
             bannerRow = root.createChild("ContentNode")
             banner = bannerRow.createChild("ContentNode")
             banner.HDPOSTERURL = "pkg:/images/highlightd.png"
@@ -92,14 +100,18 @@ sub onContentComplete()
             m.home.showRowCounter = [false]
             m.home.numRows = root.getChildCount()
             m.home.itemSize = [1880, 0]
-            m.home.rowHeights = [420, 290, 410, 520, 270, 340]
+            m.home.rowHeights = [290, 410, 520, 270, 340]
             m.home.rowItemSpacing = [15, 0]
-            m.home.rowItemSize = [[1880, 440], [1880, 270], [270, 390], [1880, 500], [1880, 250], [480, 320]]
+            m.home.rowItemSize = [[1880, 270], [270, 390], [1880, 500], [1880, 250], [480, 320]]
             m.home.rowFocusAnimationStyle = "floatingFocus"
             m.home.vertFocusAnimationStyle = "fixedFocus"
             m.home.content = root
             m.home.observeField("itemSelected", "onHomeRowSelected")
-            m.home.setFocus(true)
+            if m.inline = invalid
+                m.home.setFocus(true)
+            else
+                m.inline.setFocus(true)
+            end if
 
             m.promoMgr.callFunc("onScreenChanged", {root: m.viewRoot, screenName: "home" })
             m.promoMgr.callFunc("customTrack", {customFieldId: "home"})
@@ -107,13 +119,23 @@ sub onContentComplete()
     end if
 end sub
 
+sub onInlineResult()
+    print m.inline.result
+end sub
+
 sub showHome()
 end sub
 
 sub showLatest()
+    prompt = m.promoMgr.callFunc("getPrompt", {pathId: "9d7c36b6-014c-41ed-a691-65e52d144976"})
+    ' prompts = m.promoMgr.callFunc("getPrompts", {pzType: -1})
+    ' prompts = m.promoMgr.callFunc("getTriggerablePrompts", {pzType: -1, screenName: "home", clickId: "interstitial"})
+    ' m.promoMgr.callFunc("sendPromptEvent", { event: "impression", prompt: prompt })
+    m.promoMgr.callFunc("showPrompt", {root: m.viewRoot, prompt: prompt})
 end sub
 
 sub showGenres()
+    m.promoMgr.callFunc("onButtonClicked", {root: m.viewRoot, id: "genres"})
 end sub
 
 sub onHomeRowSelected()
@@ -125,6 +147,8 @@ sub onHomeRowSelected()
     end if
 
     if item[0] = 2 or item[0] = 5
+        m.promoMgr.callFunc("onButtonClicked", {root: m.viewRoot, id: "interstitial"})
+
         m.home.visible = false
         m.modal.visible = true
         contentNode = m.home.content.getChild(item[0]).getChild(item[1])
@@ -216,6 +240,11 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
                     else
                         return true
                     end if
+                else
+                    if m.inline <> invalid and m.home.hasFocus() = true
+                        m.inline.setFocus(true)
+                        return true
+                    end if
                 end if
                 
                 m.menuHome.forceHighlighted = false
@@ -236,7 +265,11 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
                 if m.modal.visible
                     m.detail.setFocus(true)
                 else
-                    m.home.setFocus(true)
+                    if m.inline <> invalid and m.inline.hasFocus() = false
+                        m.inline.setFocus(true)
+                    else
+                        m.home.setFocus(true)
+                    end if
                 end if
                 return true
             end if
@@ -259,12 +292,13 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
     return false
 end function
 
-sub onModalDismissed()
-    print "modal result = " + m.promoMgr.result.value.toStr()
+sub onPromptResult()
+    print "modal result = " + m.promoMgr.result.code.toStr()
     print m.promoMgr.result
-    if m.promoMgr.result.extra <> invalid and m.promoMgr.result.extra.roku <> invalid and m.promoMgr.result.extra.roku <> ""
+    sendAnalytics(m.promoMgr.result)
+    if  m.promoMgr.result.roku <> invalid and m.promoMgr.result.roku <> ""
         m.promoMgr.observeField("iapResult", "purchaseStep3")
-        m.promoMgr.callFunc("purchaseIap", {sku: m.promoMgr.result.extra.roku, qty: 1})
+        m.promoMgr.callFunc("purchaseIap", {sku: m.promoMgr.result.roku, qty: 1})
     else
         if m.modal.visible
             m.detail.setFocus(true)
@@ -278,4 +312,14 @@ sub purchaseStep3()
     m.promoMgr.unobserveField("iapResult")
     print m.promoMgr.iapResult
     m.home.setFocus(true)
+end sub
+
+sub sendAnalytics(promptResult as object)
+    if promptResult.promptMeta <> invalid
+        experiment = promptResult.promptMeta
+        ' the experiment conatins following data,
+        ' promptName, promptID, promptVariationName, promptVariationID, promptExperimentName, promptExperimentID
+
+        'sendData(experiment)
+    end if
 end sub

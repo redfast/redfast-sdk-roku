@@ -1,2 +1,2 @@
 !#/bin/bash
-zip -r roku-demo.zip components source manifest images source
+zip -r roku-demo.zip components source manifest images source fonts/Roboto* fonts/AllProDisplayC*

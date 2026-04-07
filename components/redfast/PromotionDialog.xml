@@ -4,16 +4,16 @@
 	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
 
 	<script type="text/brightscript"
-		uri="pkg:/components/redfast/PromotionDialog.brs" />
+		uri="PromotionDialog.brs" />
 	<script type="text/brightscript"
-		uri="pkg:/components/redfast/consts.brs" />
+		uri="consts.brs" />
 	<script type="text/brightscript"
-		uri="pkg:/components/redfast/LocalStorage.brs" />
+		uri="LocalStorage.brs" />
 
 	<interface>
 		<function name="showModal" />
 		<field id="result" type="assocarray" />
-		<field id="font" type="node" />
+		<field id="fonts" type="assocarray" />
 	</interface>
 
 	<children>
@@ -29,17 +29,17 @@
 					horizAlign="left" vertAlign="center" translation="[100, 250]"
 					numLines="5" wrap="true">
 				</Label>
-				<CtaButton id="rf_retention_confirm_button_text"
-					translation="[220, 650]" width="350" height="80" />
-				<CtaButton id="rf_retention_cancel_button_text"
-					translation="[620, 650]" width="350" height="80" visible="false"/>
-				<CtaButton id="rf_retention_accept2_button_text"
-					translation="[1020, 650]" width="350" height="80" visible="false" />
-				<Label id="countDown" height="50" width="720"
+				<Rectangle id="buttonRoot" color="0x101010a0" width="1920">
+					<CtaButton id="rf_retention_confirm_button_text"
+						translation="[40, 650]" width="350" height="45" />
+					<CtaButton id="rf_retention_accept2_button_text"
+						translation="[420, 650]" width="350" height="45" visible="false"/>
+					<CtaButton id="rf_retention_cancel_button_text"
+						translation="[820, 650]" width="350" height="45" visible="false" />
+				</Rectangle>
+				<Label id="countDown" height="50" width="820"
 					horizAlign="left" text="" vertAlign="center"
-					translation="[50, 740]">
-					<Font role="font" uri="pkg:/fonts/Roboto-Regular.ttf"
-						size="16" />
+					translation="[40, 740]">
 				</Label>
 			</Poster>
 		</Rectangle>

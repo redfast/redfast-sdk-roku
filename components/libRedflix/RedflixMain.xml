@@ -24,7 +24,9 @@
 			</Rectangle>
 			<Rectangle id="content" color="#081b27" width="1920"
 				height="960" translation="[0,120]">
-				<RowList id="home" translation="[20, 20]" />
+				<Rectangle id="hzBannerRoot" color="#081b27" width="1920"
+					height="420" />
+				<RowList id="home" translation="[20, 420]" />
 			</Rectangle>
 			<Rectangle id="modal" color="#081b27" width="1920"
 				height="960" translation="[0,120]" visible="false">

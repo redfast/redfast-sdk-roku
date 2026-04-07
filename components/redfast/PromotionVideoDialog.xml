@@ -2,16 +2,16 @@
 <component name="PromotionVideoDialog" extends="Group" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
 
 	<script type="text/brightscript" 
-		uri="pkg:/components/redfast/PromotionVideoDialog.brs" />
+		uri="PromotionVideoDialog.brs" />
 	<script type="text/brightscript"
-		uri="pkg:/components/redfast/consts.brs" />
+		uri="consts.brs" />
 	<script type="text/brightscript"
-		uri="pkg:/components/redfast/LocalStorage.brs" />
+		uri="LocalStorage.brs" />
 		
 	<interface>
 		<function name="showModal" />
 		<field id="result" type="assocarray" />
-		<field id="font" type="node" />
+		<field id="fonts" type="assocarray" />
 	</interface>
 	
 	<children>
@@ -20,9 +20,9 @@
 			<Video id="rf_settings_video">
 				<Poster id="rf_settings_bg_image" />
 				<CtaButton id="rf_retention_confirm_button_text"
-					width="350" height="80" />
+					translation="[40, 650]" width="350" height="80" />
 				<CtaButton id="rf_retention_cancel_button_text"
-					width="350" height="80" />
+					translation="[420, 650]" width="350" height="80" />
 			</Video>
 		</Rectangle>
 	</children>

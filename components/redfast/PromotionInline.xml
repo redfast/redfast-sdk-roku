@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="PromotionInline" extends="Group"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="PromotionInline.brs" />
+	<script type="text/brightscript"
+		uri="consts.brs" />
+		
+	<interface>
+		<function name="showInline" />
+		<field id="result" type="assocarray" />
+		<field id="fonts" type="assocarray" />
+	</interface>
+
+	<children>
+        <Rectangle id="background" color="0x00000000" width="1920" >
+			<Rectangle id="root" color="0x00000000" width="1900" translation="[10, 10]" >
+            	<Poster id="poster" translation="[0, 0]"/>
+				<Label id="accessibility" height="1" width="1" color="#00000000" />
+			</Rectangle >
+		</Rectangle>
+	</children>
+</component>

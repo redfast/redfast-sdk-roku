@@ -44,11 +44,6 @@ sub fireEventImpl()
     if m.top.anonymous_user_id <> ""
         connection.AddHeader("ANONYMOUS-USER-ID", m.top.anonymous_user_id)
     end if
-    if m.top.userId = "" and m.top.anonymous_user_id = ""
-        print "user id is not provided"
-        m.top.content = invalid
-        return
-    end if
 
     urlParams = "?"
     waitingTime = 4000
@@ -59,12 +54,15 @@ sub fireEventImpl()
     else if event = "resetGoal"
         urlParams += "client_reset_complete=true&id=" + m.top.appId
     else if event = "holdout" or event = "impression" or event = "dismiss" or event = "goal"
-        urlParams += "&id=" + m.top.appId
+        urlParams += "id=" + m.top.appId
         if m.params.actionGroupId <> ""
             urlParams += "&action_group_id=" + m.params.actionGroupId
         end if
         if event = "dismiss"
             urlParams += "&click=" + m.params.reason
+        end if
+        if event = "goal" and m.params.accept_type <> invalid
+            urlParams += "&accept_type=" + m.params.accept_type
         end if
     else
         date = CreateObject("roDateTime")
@@ -90,7 +88,7 @@ sub fireEventImpl()
     port = CreateObject("roMessagePort")
     connection.SetPort(port)
     connection.SetUrl(fullUrl)
-    print fullUrl + ": with user: " + m.top.userId
+    print fullUrl + ": with user: " + m.top.userId + ", anonymous user id:" + m.top.anonymous_user_id
     if connection.AsyncGetToString()
         result = wait(waitingTime, port)
         if type(result) = "roUrlEvent"

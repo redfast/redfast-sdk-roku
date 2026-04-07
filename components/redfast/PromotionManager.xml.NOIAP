@@ -13,7 +13,6 @@
 	<interface>
 		<field id="isProd" type="bool" />
 		<field id="result" type="assocarray" />
-		<field id="iapResult" type="node" />
 		<field id="font" type="node" />
 		<field id="lastError" type="string" />
 		<function name="initPromotion" />
@@ -27,9 +26,6 @@
 		<function name="onInlineDismissed" />
 		<function name="onInlineViewed" />
 		<function name="getInlines" />
-		<function name="getIapItems" />
-		<function name="getPuchasedItems" />
-		<function name="purchaseIap" />
 		<function name="customTrack" />
 		<function name="resetGoal" />
 		<function name="getMetas" />

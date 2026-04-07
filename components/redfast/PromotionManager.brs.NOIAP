@@ -7,7 +7,6 @@ sub init()
     m.currentScreenName = ""
     m.allResults = PromotionResult()
     m.allErrors = ErrorMessage()
-    m.billing = m.top.FindNode("billing")
     m.pingRetry = 60
     m.lastEtag = invalid
     m.lastGoodPingInterval = 60
@@ -270,61 +269,10 @@ sub onModalDismissed()
     m.modal = invalid
     prod_id = m.modalParam.path.actions.rf_settings_roku_product_id
     prod_op = m.modalParam.path.actions.rf_settings_roku_product_operation
-    if prod_id <> invalid and prod_op <> invalid and prod_id <> "" and prod_op <> ""
-        m.billing.ObserveField("catalog", "inAppUpdate1")
-        m.billing.command = "getCatalog"
-    else
-        m.top.result = m.modalResult
-        m.modalParam = invalid
-    end if
+    m.top.result = m.modalResult
+    m.modalParam = invalid
     m.modalParamsDictionary = {}
     m.screenChangeDelay = invalid
-end sub
-
-sub inAppUpdate1()
-    m.billing.unobserveField("catalog")
-    m.catalog = m.billing.catalog
-    for ii = 0 to m.catalog.getChildCount() - 1
-        item = m.catalog.getChild(ii)
-        if item.id = m.modalParam.path.actions.rf_settings_roku_product_id
-            print "inapp update: found product id"
-            m.updateItem = item
-            m.billing.ObserveField("purchases", "inAppUpdate2")
-            m.billing.command = "getPurchases"
-            return
-        end if
-    end for
-    m.top.result = m.modalResult
-    m.modalParam = invalid
-end sub
-
-sub inAppUpdate2()
-    m.billing.unobserveField("purchases")
-    m.purchased = m.billing.purchases
-    for ii = 0 to m.purchased.getChildCount() - 1
-        item = m.purchased.getChild(ii)
-        if item.id = m.modalParam.path.actions.rf_settings_roku_product_id
-            print "inapp update: already purchased"
-            m.top.result = m.modalResult
-            m.modalParam = invalid
-            return
-        end if
-    end for
-
-    orders = CreateObject("roSGNode", "ContentNode")
-    order = orders.createChild("ContentNode")
-    order.addFields({ "code": m.updateItem.id, "qty": 1 })
-    orders.action = m.modalParam.path.actions.rf_settings_roku_product_operation
-    m.billing.order = orders
-    m.billing.ObserveField("orderStatus", "inAppUpdate3")
-    m.billing.command = "doOrder"
-end sub
-
-sub inAppUpdate3()
-    m.billing.unobserveField("orderStatus")
-    m.modalResult.orderStatus = m.billing.orderStatus.status
-    m.top.result = m.modalResult
-    m.modalParam = invalid
 end sub
 
 sub onScreenChanged(params as object)
@@ -464,45 +412,6 @@ function getInlines(params as object) as object
     end if
     return row
 end function
-
-sub getIapItems()
-    m.billing.ObserveField("catalog", "On_billing_catalog")
-    m.billing.command = "getCatalog"
-end sub
-
-sub getPuchasedItems()
-    m.billing.ObserveField("purchases", "On_get_purchased")
-    m.billing.command = "getPurchases"
-end sub
-
-sub On_get_purchased()
-    m.billing.unobserveField("purchases")
-    m.top.iapResult = m.billing.purchases
-end sub
-
-sub On_billing_catalog()
-    m.billing.unobserveField("catalog")
-    m.top.iapResult = m.billing.catalog
-end sub
-
-sub purchaseIap(params as object)
-    orders = CreateObject("roSGNode", "ContentNode")
-    order = orders.createChild("ContentNode")
-    order.addFields({ "code": params.sku, "qty": params.qty })
-    if params.action <> invalid
-        if "Upgrade" = params.action or "Downgrade" = params.action
-            orders.action = params.action
-        end if
-    end if
-    m.billing.order = orders
-    m.billing.ObserveField("orderStatus", "On_billing_purchaseResult")
-    m.billing.command = "doOrder"
-end sub
-
-sub On_billing_purchaseResult()
-    m.billing.unobserveField("orderStatus")
-    m.top.iapResult = m.billing.orderStatus
-end sub
 
 sub customTrack(params as object)
     if m.promotionEnabled = false
