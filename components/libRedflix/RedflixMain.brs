@@ -135,7 +135,8 @@ sub showLatest()
 end sub
 
 sub showGenres()
-    m.promoMgr.callFunc("onButtonClicked", {root: m.viewRoot, id: "genres"})
+    m.promoMgr.callFunc("onScreenChanged", {root: m.viewRoot, screenName: "detail" })
+    m.promoMgr.callFunc("onButtonClicked", {root: m.viewRoot, id: "wizard"})
 end sub
 
 sub onHomeRowSelected()

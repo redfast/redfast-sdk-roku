@@ -231,18 +231,7 @@ sub onButtonClicked(params as object)
     end if
 
     path = getPath(m.actions, params.id)
-    if path <> invalid
-        modalParam = {}
-        modalParam.appId = m.appId
-        modalParam.userId = m.userId
-        modalParam.deviceType = m.deviceType
-        modalParam.path = path
-        modalParam.root = params.root
-        m.modalParamsDictionary.addReplace(m.currentScreenName, modalParam)
-        onDisplayModal()
-    else
-        m.top.result = { code: m.allResults.notApplicable }
-    end if
+    prepareModal(path, params.root)
 
     usages = m.actions.configs.usage
     for kk = 0 to usages.count() - 1
@@ -267,12 +256,58 @@ sub onModalDismissed()
 
     m.modalResult = m.modal.result
     m.modal = invalid
-    prod_id = m.modalParam.path.actions.rf_settings_roku_product_id
-    prod_op = m.modalParam.path.actions.rf_settings_roku_product_operation
-    m.top.result = m.modalResult
-    m.modalParam = invalid
     m.modalParamsDictionary = {}
     m.screenChangeDelay = invalid
+
+    closedPath = m.modalParam.path
+    pathTypes = PathType()
+    if closedPath.path_type = pathTypes.modal or closedPath.path_type = pathTypes.bottomBanner or closedPath.path_type = pathTypes.interstitial
+        if closedPath.sequence <> invalid
+            reason = ""
+            if m.modalResult.code = m.allResults.button1
+                if closedPath.actions.rf_retention_button1_text <> invalid
+                    reason = closedPath.actions.rf_retention_button1_text
+                end if
+            else if m.modalResult.code = m.allResults.button2
+                if closedPath.actions.rf_retention_button2_text <> invalid
+                    reason = closedPath.actions.rf_retention_button2_text
+                end if
+            else if m.modalResult.code = m.allResults.button3
+                reason = "declined"
+            else if m.modalResult.code = m.allResults.dismissed
+                reason = "dismissed"
+            else if m.modalResult.code = m.allResults.timeout
+                reason = "timeout"
+            end if
+
+            sequence = closedPath.sequence
+            shouldContinue = false
+            for ii = 0 to sequence.continue_interaction_types.count() - 1
+                if sequence.continue_interaction_types[ii] = reason
+                    shouldContinue = true
+                    exit for
+                end if
+            end for
+
+            if shouldContinue
+                nextPath = invalid
+                if m.actions <> invalid and m.actions.paths <> invalid
+                    for ii = 0 to m.actions.paths.count() - 1
+                        p = m.actions.paths[ii]
+                        if p.sequence <> invalid and p.sequence.id = sequence.id and p.sequence.order = sequence.order + 1
+                            nextPath = p
+                            exit for
+                        end if
+                    end for
+                end if
+                if nextPath <> invalid
+                    nextPath.delay_seconds = 0
+                    prepareModal(nextPath, m.modalParam.root)
+                end if
+            end if
+        end if
+    end if
+    m.modalParam = invalid
 end sub
 
 sub onScreenChanged(params as object)
@@ -288,30 +323,7 @@ sub onScreenChanged(params as object)
     end if
 
     path = getPath(m.actions, "")
-    if path <> invalid
-        modalParam = {}
-        modalParam.appId = m.appId
-        modalParam.userId = m.userId
-        modalParam.deviceType = m.deviceType
-        if path.action_group_id = invalid then path.action_group_id = ""
-        modalParam.path = path
-        modalParam.root = params.root
-        m.modalParamsDictionary.addReplace(m.currentScreenName, modalParam)
-
-        if m.screenChangeDelay <> invalid
-            m.screenChangeDelay.control = "stop"
-            m.screenChangeDelay = invalid
-        end if
-        if (path.delay_seconds > 0)
-            m.screenChangeDelay = createObject("RoSGNode", "Timer")
-            m.screenChangeDelay.duration = path.delay_seconds
-            m.screenChangeDelay.observeField("fire", "onDisplayModal")
-            m.screenChangeDelay.repeat = false
-            m.screenChangeDelay.control = "start"
-        else
-            onDisplayModal()
-        end if
-    end if
+    prepareModal(path, params.root)
 end sub
 
 sub onHoldOutUpdate()
@@ -337,6 +349,31 @@ function isSuppressedByHoldout(path) as boolean
     end if
     return isPresented
 end function
+
+sub prepareModal(path as object, root as object)
+    if path <> invalid
+        modalParam = {}
+        modalParam.appId = m.appId
+        modalParam.userId = m.userId
+        modalParam.deviceType = m.deviceType
+        if path.action_group_id = invalid then path.action_group_id = ""
+        modalParam.path = path
+        modalParam.root = root
+        m.modalParamsDictionary.addReplace(m.currentScreenName, modalParam)
+
+        if m.screenChangeDelay <> invalid
+            m.screenChangeDelay.control = "stop"
+            m.screenChangeDelay = invalid
+        end if
+        m.screenChangeDelay = createObject("RoSGNode", "Timer")
+        m.screenChangeDelay.duration = path.delay_seconds
+        m.screenChangeDelay.observeField("fire", "onDisplayModal")
+        m.screenChangeDelay.repeat = false
+        m.screenChangeDelay.control = "start"
+    else
+        m.top.result = { code: m.allResults.notApplicable }
+    end if
+end sub
 
 sub onDisplayModal()
     if not m.modalParamsDictionary.DoesExist(m.currentScreenName)
@@ -463,7 +500,7 @@ function getMetas() as object
 end function
 
 function getVersion() as string
-    return "1.0.44"
+    return "1.0.45"
 end function
 
 function matchWildCharStrings(trigger as string, name as string) as boolean
@@ -477,10 +514,10 @@ function matchWildCharStrings(trigger as string, name as string) as boolean
 
     specialChars = ["?", "+", ".", "(", ")", "[", "]", "{", "}", "\", "^", "$", "|"]
     for each char in specialChars
-        trigger = trigger.replace()(char, "\" + char)
+        trigger = trigger.replace(char, "\" + char)
     end for
     trigger = trigger.replace("*", ".*")
-    pattern = CreateObject("roRegex", trigger, "")  
+    pattern = CreateObject("roRegex", trigger, "")
     match = pattern.IsMatch(name)
     return match
 end function
