@@ -61,8 +61,13 @@ sub fireEventImpl()
         if event = "dismiss"
             urlParams += "&click=" + m.params.reason
         end if
-        if event = "goal" and m.params.accept_type <> invalid
-            urlParams += "&accept_type=" + m.params.accept_type
+        if event = "goal"
+            if m.params.accept_type <> invalid
+                urlParams += "&accept_type=" + m.params.accept_type
+            end if
+            if m.params.surveySelection <> invalid
+                urlParams += "&survey_input_value=" + m.params.surveySelection
+            end if
         end if
     else
         date = CreateObject("roDateTime")

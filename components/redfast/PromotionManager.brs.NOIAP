@@ -404,7 +404,11 @@ sub onDisplayModal()
     m.modal = invalid
     pathTypes = PathType()
     if m.modalParam.path.path_type = pathTypes.modal or m.modalParam.path.path_type = pathTypes.interstitial or m.modalParam.path.path_type = pathTypes.bottomBanner
-        m.modal = createObject("roSGNode", "PromotionDialog")
+        if m.modalParam.path.actions.rf_retention_survey_selected = "true"
+            m.modal = createObject("roSGNode", "PromotionSurvey")
+        else
+            m.modal = createObject("roSGNode", "PromotionDialog")
+        end if
     else
         m.modal = createObject("roSGNode", "PromotionVideoDialog")
     end if
@@ -500,7 +504,7 @@ function getMetas() as object
 end function
 
 function getVersion() as string
-    return "1.0.45"
+    return "1.0.46"
 end function
 
 function matchWildCharStrings(trigger as string, name as string) as boolean

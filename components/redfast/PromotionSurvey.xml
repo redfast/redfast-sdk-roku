@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="PromotionSurvey" extends="Group"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript"
+		uri="PromotionSurvey.brs" />
+	<script type="text/brightscript"
+		uri="consts.brs" />
+	<script type="text/brightscript"
+		uri="LocalStorage.brs" />
+
+	<interface>
+		<function name="showModal" />
+		<field id="result" type="assocarray" />
+		<field id="fonts" type="assocarray" />
+	</interface>
+
+	<children>
+		<Rectangle id="root" color="0x000000e0" width="1920"
+			height="1080" translation="[0, 0]">
+			<Poster id="rf_settings_bg_image" width="1584" height="864"
+				translation="[168, 108]">
+				<Label id="rf_retention_title" height="0" width="720"
+					horizAlign="left" vertAlign="center" translation="[100, 50]"
+					numLines="2" wrap="true">
+				</Label>
+				<Label id="rf_retention_message" height="0" width="720"
+					horizAlign="left" vertAlign="center" translation="[100, 250]"
+					numLines="5" wrap="true">
+				</Label>
+                <Rectangle id="buttonRoot" color="0x101010a0">
+					<CtaButton id="option1" />
+					<CtaButton id="option2" />
+					<CtaButton id="option3" />
+                    <CtaButton id="option4" />
+					<CtaButton id="option5" />
+				</Rectangle>
+				<Label id="countDown" height="50" width="820"
+					horizAlign="left" text="" vertAlign="center"
+					translation="[40, 740]">
+				</Label>
+			</Poster>
+		</Rectangle>
+	</children>
+</component>
