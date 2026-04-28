@@ -598,7 +598,7 @@ function getMetas() as object
 end function
 
 function getVersion() as string
-    return "1.0.46"
+    return "1.0.47"
 end function
 
 function matchWildCharStrings(trigger as string, name as string) as boolean

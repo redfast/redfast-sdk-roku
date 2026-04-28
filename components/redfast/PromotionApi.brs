@@ -50,7 +50,7 @@ sub fireEventImpl()
     if event = "click"
         urlParams += "type=" + m.params.type + "&event=" + connection.Escape(m.params.eventName) + "&id=" + m.params.id + "&value=" + connection.Escape(m.params.value)
     else if event = "customTrack"
-        urlParams += "type=custom&event=" + connection.Escape(m.params.customFieldId) + "&id=" + m.top.appId
+        urlParams += "type=custom&custom_field_id=" + connection.Escape(m.params.customFieldId) + "&id=" + m.top.appId
     else if event = "resetGoal"
         urlParams += "client_reset_complete=true&id=" + m.top.appId
     else if event = "holdout" or event = "impression" or event = "dismiss" or event = "goal"
