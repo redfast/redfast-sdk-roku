@@ -14,7 +14,6 @@ sub init()
     di = CreateObject("roDeviceInfo")
     m.displaySize = di.GetDisplaySize()
     m.localStorage = CreateLocalStorage()
-    m.localStorage.reset(true)
     m.modalParamsDictionary = {}
     m.promotionEnabled = true
 end sub

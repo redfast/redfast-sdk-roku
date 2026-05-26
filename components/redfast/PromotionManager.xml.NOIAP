@@ -40,6 +40,6 @@
 	</interface>
 
 	<children>
-    	<ChannelStore id="billing"/>
+    	
 	</children>
 </component>
