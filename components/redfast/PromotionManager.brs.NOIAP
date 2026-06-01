@@ -256,6 +256,7 @@ sub onModalDismissed()
     m.modalResult = m.modal.result
     m.modal = invalid
     m.modalParamsDictionary = {}
+    m.top.result = m.modalResult
     m.screenChangeDelay = invalid
 
     closedPath = m.modalParam.path
@@ -503,7 +504,7 @@ function getMetas() as object
 end function
 
 function getVersion() as string
-    return "1.0.47"
+    return "1.0.48"
 end function
 
 function matchWildCharStrings(trigger as string, name as string) as boolean
