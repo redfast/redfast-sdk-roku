@@ -11,8 +11,9 @@ sub init()
     m.rf_retention_cancel_button_text = m.top.findNode("rf_retention_cancel_button_text")
     m.rf_retention_accept2_button_text = m.top.findNode("rf_retention_accept2_button_text")
     m.buttonRoot = m.top.findNode("buttonRoot")
-    m.currentButton = 0
-    m.totalButtons = 1
+    m.buttonRows = []
+    m.currentRow = 0
+    m.currentColPerRow = []
     m.countDown = m.top.findNode("countDown")
     m.result = PromotionResult()
     m.initialGrabFocus = false
@@ -209,7 +210,6 @@ sub showModal(params as object)
     m.rf_retention_cancel_button_text.ObserveField("buttonSelected", "onDecline")
     if path.actions.rf_settings_cancel_button_enabled <> invalid and path.actions.rf_settings_cancel_button_enabled = "true"
         m.rf_retention_cancel_button_text.visible = true
-        m.totalButtons = m.totalButtons + 1
     end if
     if path.actions.rf_retention_button_border_color <> invalid
         m.rf_retention_cancel_button_text.buttonBorderColor = path.actions.rf_retention_button_border_color
@@ -226,7 +226,6 @@ sub showModal(params as object)
     m.rf_retention_accept2_button_text.font = m.top.fonts.ctaFont
     if path.actions.rf_settings_confirm_button_2_enabled <> invalid and path.actions.rf_settings_confirm_button_2_enabled = "true"
         m.rf_retention_accept2_button_text.visible = true
-        m.totalButtons = m.totalButtons + 1
     end if
     if path.actions.rf_retention_button_border_color <> invalid
         m.rf_retention_accept2_button_text.buttonBorderColor = path.actions.rf_retention_button_border_color
@@ -236,7 +235,6 @@ sub showModal(params as object)
     end if
 
     m.rf_retention_accept2_button_text.ObserveField("buttonSelected", "onAccept2")
-    m.rf_retention_confirm_button_text.setFocus(true)
 
     if path.actions.button1_width = invalid and path.actions.button1_height = invalid and path.actions.button1_position_x = invalid and path.actions.button1_position_y = invalid
         ' auto button widths
@@ -276,6 +274,11 @@ sub showModal(params as object)
             m.rf_retention_cancel_button_text.height = pxToInteger(path.actions.button3_height)
             m.rf_retention_cancel_button_text.translation = [pxToInteger(path.actions.button3_position_x), m.rf_settings_bg_image.height - pxToInteger(path.actions.button3_position_y)]
         end if
+    end if
+
+    buildButtonRows()
+    if m.buttonRows.count() > 0 and m.buttonRows[0].count() > 0
+        focusButton(m.buttonRows[0][0])
     end if
 
     if path.actions.rf_settings_close_seconds <> invalid and path.actions.rf_settings_close_seconds <> ""
@@ -365,16 +368,132 @@ sub onDecline()
     }, m.currentPath)
 end sub
 
+sub buildButtonRows()
+    ROW_TOLERANCE = 30
+    btnNodes = [m.rf_retention_confirm_button_text, m.rf_retention_accept2_button_text, m.rf_retention_cancel_button_text]
+
+    visible = []
+    for i = 0 to 2
+        if btnNodes[i].visible
+            visible.push({ idx: i, x: btnNodes[i].translation[0], y: btnNodes[i].translation[1] })
+        end if
+    end for
+
+    rowYValues = []
+    for each btn in visible
+        isNew = true
+        for each ry in rowYValues
+            if Abs(ry - btn.y) < ROW_TOLERANCE
+                isNew = false
+                exit for
+            end if
+        end for
+        if isNew
+            rowYValues.push(btn.y)
+        end if
+    end for
+
+    rn = rowYValues.count()
+    for i = 0 to rn - 2
+        for j = 0 to rn - 2 - i
+            if rowYValues[j] > rowYValues[j + 1]
+                tmp = rowYValues[j]
+                rowYValues[j] = rowYValues[j + 1]
+                rowYValues[j + 1] = tmp
+            end if
+        end for
+    end for
+
+    m.buttonRows = []
+    for each ry in rowYValues
+        rowBtns = []
+        for each btn in visible
+            if Abs(btn.y - ry) < ROW_TOLERANCE
+                rowBtns.push(btn)
+            end if
+        end for
+
+        rb = rowBtns.count()
+        for i = 0 to rb - 2
+            for j = 0 to rb - 2 - i
+                if rowBtns[j].x > rowBtns[j + 1].x
+                    tmp = rowBtns[j]
+                    rowBtns[j] = rowBtns[j + 1]
+                    rowBtns[j + 1] = tmp
+                end if
+            end for
+        end for
+
+        row = []
+        for each btn in rowBtns
+            row.push(btn.idx)
+        end for
+        m.buttonRows.push(row)
+    end for
+
+    m.currentRow = 0
+    m.currentColPerRow = []
+    for each row in m.buttonRows
+        m.currentColPerRow.push(0)
+    end for
+end sub
+
+sub focusButton(idx as integer)
+    if idx = 0
+        m.rf_retention_confirm_button_text.setFocus(true)
+    else if idx = 1
+        m.rf_retention_accept2_button_text.setFocus(true)
+    else
+        m.rf_retention_cancel_button_text.setFocus(true)
+    end if
+end sub
+
 function onKeyEvent(key as string, pressed as boolean) as boolean
-    if key = "left" and pressed
-        if m.currentButton > 0
-            m.currentButton = m.currentButton - 1
+    if not pressed
+        return false
+    end if
+
+    if key = "left" or key = "right" or key = "up" or key = "down"
+        row = m.buttonRows[m.currentRow]
+        col = m.currentColPerRow[m.currentRow]
+
+        if key = "left"
+            if col > 0
+                col = col - 1
+                m.currentColPerRow[m.currentRow] = col
+                focusButton(row[col])
+            end if
+        else if key = "right"
+            if col < row.count() - 1
+                col = col + 1
+                m.currentColPerRow[m.currentRow] = col
+                focusButton(row[col])
+            end if
+        else if key = "up"
+            if m.currentRow > 0
+                m.currentRow = m.currentRow - 1
+                newRow = m.buttonRows[m.currentRow]
+                newCol = m.currentColPerRow[m.currentRow]
+                if newCol >= newRow.count()
+                    newCol = newRow.count() - 1
+                end if
+                m.currentColPerRow[m.currentRow] = newCol
+                focusButton(newRow[newCol])
+            end if
+        else if key = "down"
+            if m.currentRow < m.buttonRows.count() - 1
+                m.currentRow = m.currentRow + 1
+                newRow = m.buttonRows[m.currentRow]
+                newCol = m.currentColPerRow[m.currentRow]
+                if newCol >= newRow.count()
+                    newCol = newRow.count() - 1
+                end if
+                m.currentColPerRow[m.currentRow] = newCol
+                focusButton(newRow[newCol])
+            end if
         end if
-    else if key = "right" and pressed
-        if m.currentButton + 1 < m.totalButtons
-            m.currentButton = m.currentButton + 1
-        end if
-    else if key = "back" and pressed
+        return true
+    else if key = "back"
         if m.timer <> invalid
             m.timer.control = "stop"
         end if
@@ -384,20 +503,7 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
             code: m.result.dismissed,
             meta: m.currentPath.actions.rf_metadata
         }, m.currentPath)
+        return true
     end if
-
-    if (key = "left" or key = "right") and pressed
-        if m.currentButton = 0
-            m.rf_retention_confirm_button_text.setFocus(true)
-        else if m.currentButton = 1
-            if m.currentPath.actions.rf_settings_confirm_button_2_enabled = "true"
-                m.rf_retention_accept2_button_text.setFocus(true)
-            else
-                m.rf_retention_cancel_button_text.setFocus(true)
-            end if
-        else
-            m.rf_retention_cancel_button_text.setFocus(true)
-        end if
-    end if
-    return true
+    return false
 end function

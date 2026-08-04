@@ -115,6 +115,13 @@ sub onContentComplete()
 
             m.promoMgr.callFunc("onScreenChanged", {root: m.viewRoot, screenName: "home" })
             m.promoMgr.callFunc("customTrack", {customFieldId: "home"})
+
+            allPrompts = m.promoMgr.callFunc("getPrompts", {pathType: -1})
+            print "=== Configured prompts (" + allPrompts.count().toStr() + ") ==="
+            for each p in allPrompts
+                print "  id=" + p.id + "  type=" + p.type.toStr() + "  name=" + p.pathItem.name
+            end for
+            print "==========================================="
         end if
     end if
 end sub
@@ -124,6 +131,11 @@ sub onInlineResult()
 end sub
 
 sub showHome()
+    if m.inline <> invalid
+        m.inline.setFocus(true)
+    else
+        m.home.setFocus(true)
+    end if
 end sub
 
 sub showLatest()
@@ -147,7 +159,7 @@ sub onHomeRowSelected()
         m.promoMgr.callFunc("purchaseIap", {sku: contentNode.title, qty: 1})
     end if
 
-    if item[0] = 2 or item[0] = 5
+    if item[0] = 1 or item[0] = 2 or item[0] = 4
         m.promoMgr.callFunc("onButtonClicked", {root: m.viewRoot, id: "interstitial"})
 
         m.home.visible = false
@@ -242,7 +254,7 @@ function onKeyEvent(key as string, pressed as boolean) as boolean
                         return true
                     end if
                 else
-                    if m.inline <> invalid and m.home.hasFocus() = true
+                    if m.inline <> invalid and m.home.isInFocusChain() = true
                         m.inline.setFocus(true)
                         return true
                     end if
