@@ -16,6 +16,7 @@ sub init()
     m.localStorage = CreateLocalStorage()
     m.modalParamsDictionary = {}
     m.promotionEnabled = true
+    m.privacyConsentCategories = invalid
 end sub
 
 function callApi(observer as string) as object
@@ -60,6 +61,37 @@ sub enablePromotion(params as object)
         m.promotionEnabled = params.enabled
     end if
 end sub
+
+sub setPrivacyConsentCategories(params as object)
+    m.privacyConsentCategories = params.categories
+end sub
+
+function getPrivacyConsentCategories() as object
+    return m.privacyConsentCategories
+end function
+
+function matchPrivacyConsentCategories(path as object) as boolean
+    if m.privacyConsentCategories = invalid
+        return true
+    end if
+
+    pathCategories = copyArray(path.consent_categories)
+    consentCategories = copyArray(m.privacyConsentCategories)
+
+    if consentCategories.count() <> pathCategories.count()
+        return false
+    end if
+
+    consentCategories.Sort()
+    pathCategories.Sort()
+
+    for ii = 0 to consentCategories.count() - 1
+        if consentCategories[ii] <> pathCategories[ii]
+            return false
+        end if
+    end for
+    return true
+end function
 
 sub updatePing()
     if m.initialPing and m.timer <> invalid
@@ -155,10 +187,16 @@ function getPath(actions as object, clickId as string) as object
             end if
             if checkTriggerScreenName
                 if (trigger.click_id = invalid or trigger.click_id = "") and clickId = ""
+                    if not matchPrivacyConsentCategories(path)
+                        return invalid
+                    end if
                     path.delay_seconds = trigger.delay_seconds
                     return path
                 end if
                 if trigger.click_id = clickId
+                    if not matchPrivacyConsentCategories(path)
+                        return invalid
+                    end if
                     path.delay_seconds = trigger.delay_seconds
                     return path
                 end if
@@ -485,7 +523,7 @@ function getInlines(params as object) as object
         for ii = 0 to m.actions.paths.count() - 1
             path = m.actions.paths[ii]
             isSuppressed = isSuppressedByHoldout(path)
-            if not isSuppressed and path.actions.rf_settings_zone_id <> invalid and path.actions.rf_settings_zone_id = params.type
+            if not isSuppressed and path.actions.rf_settings_zone_id <> invalid and path.actions.rf_settings_zone_id = params.type and matchPrivacyConsentCategories(path)
                 heightSuffix = ""
                 if displaySize.h = 480
                     heightSuffix = "&screen_size=480"
@@ -597,7 +635,7 @@ function getMetas() as object
 end function
 
 function getVersion() as string
-    return "1.0.48"
+    return "1.0.49"
 end function
 
 function matchWildCharStrings(trigger as string, name as string) as boolean
@@ -678,6 +716,7 @@ function path2Prompt(path as object) as object
         countDownPromptInvisible: countDownPromptInvisible,
         countDown: path.actions.rf_settings_close_seconds,
         horizontalPoster: path.actions.rf_settings_bg_image_roku_os_tv_composite,
+        consentCategories: path.consent_categories,
         pathItem: path
     }
     prompt.impression = function()
@@ -740,7 +779,7 @@ function getPrompts(params as object) as object
         for ii = 0 to m.actions.paths.count() - 1
             path = m.actions.paths[ii]
             if path.path_type = pzType or pathTypes.all = pzType
-                if zid = invalid or zid = path.actions.rf_settings_zone_id
+                if (zid = invalid or zid = path.actions.rf_settings_zone_id) and matchPrivacyConsentCategories(path)
                     pathItemsFiltered.push(path)
                 end if
             end if
