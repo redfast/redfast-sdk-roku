@@ -174,6 +174,7 @@ function getPath(actions as object, clickId as string) as object
 
     for ii = 0 to paths.count() - 1
         path = paths[ii]
+        matchedTrigger = invalid
         for jj = 0 to path.triggers.count() - 1
             trigger = path.triggers[jj]
             urlPath = trigger.url_path
@@ -187,21 +188,23 @@ function getPath(actions as object, clickId as string) as object
             end if
             if checkTriggerScreenName
                 if (trigger.click_id = invalid or trigger.click_id = "") and clickId = ""
-                    if not matchPrivacyConsentCategories(path)
-                        return invalid
-                    end if
-                    path.delay_seconds = trigger.delay_seconds
-                    return path
+                    matchedTrigger = trigger
+                    exit for
                 end if
                 if trigger.click_id = clickId
-                    if not matchPrivacyConsentCategories(path)
-                        return invalid
-                    end if
-                    path.delay_seconds = trigger.delay_seconds
-                    return path
+                    matchedTrigger = trigger
+                    exit for
                 end if
             end if
         end for
+
+        ' A path whose trigger matches but whose consent categories don't
+        ' isn't a dead end - keep looking at the remaining candidate paths
+        ' instead of aborting the whole lookup.
+        if matchedTrigger <> invalid and matchPrivacyConsentCategories(path)
+            path.delay_seconds = matchedTrigger.delay_seconds
+            return path
+        end if
     end for
     return invalid
 end function

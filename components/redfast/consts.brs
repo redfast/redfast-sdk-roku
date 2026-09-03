@@ -65,7 +65,7 @@ function PrivacyConsentCategory() as object
     m = {}
     m.strictlyNecessary = "strictly_necessary"
     m.performance = "performance"
-    m.functional = "funcional"
+    m.functional = "functional"
     m.targeting = "targeting"
     return m
 end function

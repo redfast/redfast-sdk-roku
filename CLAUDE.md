@@ -58,6 +58,7 @@ Background `Task` nodes for fetching content (run on separate threads).
   - `sendPromptEvent(params)` — Fire analytics events (impression, dismiss, goal, holdout, etc.).
   - IAP integration via `ChannelStore` node: `getIapItems`, `purchaseIap`, `getPuchasedItems`.
   - `customTrack`, `ping`, `setUserId`, `setAnonymousUserId`, `resetGoal`, `getMetas`, `getVersion`.
+  - `setPrivacyConsentCategories(params)` / `getPrivacyConsentCategories()` — gates prompt eligibility by `PrivacyConsentCategory` (`consts.brs`); a path only matches once its `consent_categories` are an exact set match to the configured categories. Checked in `getPath`, `getInlines`, and `getPrompts`.
   - Has a `.NOIAP` variant (`PromotionManager.brs.NOIAP` / `.xml.NOIAP`) that strips IAP/billing support.
 
 - **PromotionApi.brs/.xml** — Network layer (extends `Task` for background threading). `fireEvent(params)` sends HTTP requests to `conduit.redfast.com` for events: ping, impression, dismiss, goal, click, customTrack, resetGoal, holdout. Returns parsed JSON via `content` field.
