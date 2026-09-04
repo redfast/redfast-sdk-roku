@@ -17,6 +17,8 @@
 		<field id="lastError" type="string" />
 		<function name="initPromotion" />
 		<function name="enablePromotion" />
+		<function name="setPrivacyConsentCategories" />
+		<function name="getPrivacyConsentCategories" />
 		<function name="setUserId" />
 		<function name="setAnonymousUserId" />
 		<function name="getUserId" />

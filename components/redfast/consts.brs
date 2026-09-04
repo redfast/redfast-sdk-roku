@@ -61,6 +61,25 @@ function ErrorMessage() as object
     return m
 end function
 
+function PrivacyConsentCategory() as object
+    m = {}
+    m.strictlyNecessary = "strictly_necessary"
+    m.performance = "performance"
+    m.functional = "functional"
+    m.targeting = "targeting"
+    return m
+end function
+
+function copyArray(arr as object) as object
+    copy = []
+    if arr <> invalid
+        for each item in arr
+            copy.push(item)
+        end for
+    end if
+    return copy
+end function
+
 function getKeyValuePair(components as string) as object
     keyValue = components
     remain = ""
